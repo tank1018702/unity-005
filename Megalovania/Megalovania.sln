@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Megalovania", "Assembly-CSharp.csproj", "{21062282-3F1B-636B-839C-A85A1A8A287A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Megalovania", "Assembly-CSharp-Editor.csproj", "{2F8A6EE6-3B1C-3C7F-4DDC-C097B93F86C6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21062282-3F1B-636B-839C-A85A1A8A287A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21062282-3F1B-636B-839C-A85A1A8A287A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21062282-3F1B-636B-839C-A85A1A8A287A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21062282-3F1B-636B-839C-A85A1A8A287A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F8A6EE6-3B1C-3C7F-4DDC-C097B93F86C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F8A6EE6-3B1C-3C7F-4DDC-C097B93F86C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F8A6EE6-3B1C-3C7F-4DDC-C097B93F86C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F8A6EE6-3B1C-3C7F-4DDC-C097B93F86C6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
