@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4787467513497438}
   - component: {fileID: 95835672703833644}
   - component: {fileID: 212555326111615856}
-  - component: {fileID: 114397281829719934}
   - component: {fileID: 61179061623554042}
+  - component: {fileID: 114098410535013908}
   m_Layer: 16
   m_Name: Zombie
   m_TagString: Monster
@@ -86,7 +86,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114397281829719934
+--- !u!114 &114098410535013908
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,25 +94,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1883316400240674}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 891d4a1a81af9eb41b02e57c365a3457, type: 3}
+  m_Script: {fileID: 11500000, guid: f9b6f7dbbb3ffb743a42c31d4c134b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 0.5
-  HP: 100
+  MoveSpeed: 0.49
+  HP: 300
   damage: 20
-  lifeTime: 0
-  IntervalTime: 1
-  idleTime: 1
-  nutrient: 3
+  CarryNutrients: 0
+  isLowMonster: 0
+  IntervalTime: 0.65
+  idleTime: 1.05
+  nutrient: 0
   Enemylayer:
     serializedVersion: 2
     m_Bits: 131072
   FoodLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   WallLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 262656
 --- !u!212 &212555326111615856
 SpriteRenderer:
   m_ObjectHideFlags: 1

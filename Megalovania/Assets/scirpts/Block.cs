@@ -93,7 +93,7 @@ public class Block : MonoBehaviour
             MonsterIndex = 1;
             n = 1;
         }
-        else if(n>50)
+        else if(nutrient>50)
         {
             MonsterIndex = 0;
             n = 0;

@@ -19,9 +19,11 @@ public class Character : MonoBehaviour
 
     public int damage;
 
-    [Header("times")]
-    public float lifeTime;
+    public int  CarryNutrients;
+    public bool isLowMonster;
 
+    [Header("times")]
+    
 
     public float IntervalTime;
     public float idleTime;
@@ -71,12 +73,6 @@ public class Character : MonoBehaviour
         {
             _animator.SetFloat("PlaySpeed", 2f);
         }
-        //StartCoroutine(Action());
-
-
-
-
-        //InvokeRepeating("RandomDir", 0, 1f);
     }
 
     //private void Update()
@@ -86,33 +82,20 @@ public class Character : MonoBehaviour
 
     protected Direction RandomDir()
     {
+        
         CurDir = (Direction)Random.Range((int)Direction.Up, (int)Direction.Right + 1);
+        _animator.SetInteger("Dir", (int)CurDir);
+
 
         return CurDir;
     }
 
-    
-
-    protected virtual IEnumerator Behaviour(Vector2 _dir)
-    {
-        if (ObstacleCheck(_dir, WallLayer))
-        {
-            yield return TransportNutrients();
-        }
-        else if (ObstacleCheck(_dir, Enemylayer))
-        {
-            onAttackState = true;
-        }
-        else if (ObstacleCheck(_dir, FoodLayer))
-        {
-            yield return Eat();
-        }
-    }
+  
 
     protected virtual IEnumerator TransportNutrients()
     {
         RaycastHit2D[] hit;
-        if (ObstacleCheck(Direction2Vector2(CurDir), WallLayer, out hit))
+        if (ObstacleCheck(CurDir, WallLayer, out hit))
         {
             _animator.SetTrigger("Attack");
 
@@ -126,21 +109,33 @@ public class Character : MonoBehaviour
         yield return IdleTime;
     }
 
-    IEnumerator Eat()
+
+    protected IEnumerator CheckAndAttackEnemyAround()
     {
-        yield return null;
+        Collider2D[] arounds = Physics2D.OverlapCircleAll(transform.position, 0.09f, Enemylayer);
+
+        if(arounds.Length>0)
+        {
+            
+            targetDir = GetDirection(transform.position, arounds[0].transform.position);
+            yield return Attack(targetDir);
+          
+        }
+       
     }
-    protected  IEnumerator Attack()
+
+    protected IEnumerator Attack(Direction dir)
     {
         RaycastHit2D[] hit;
-        if (ObstacleCheck(Direction2Vector2(targetDir), Enemylayer, out hit))
+
+        
+        while (ObstacleCheck(dir, Enemylayer, out hit))
         {
-            if(_animator.GetInteger("Dir")!=(int)targetDir)
-            {
-                _animator.SetInteger("Dir", (int)targetDir);
-                yield return null;
-            }
-      
+            _animator.SetBool("MoveState", false);
+
+            _animator.SetInteger("Dir", (int)dir);
+            yield return null;
+
             _animator.SetTrigger("Attack");
 
             for (int i = 0; i < hit.Length; i++)
@@ -148,15 +143,19 @@ public class Character : MonoBehaviour
                 Character c = hit[i].transform.GetComponent<Character>();
                 if (c)
                 {
-                    c.OnBeHit(damage, CurDir);
+                    c.OnBeHit(damage);
                 }
             }
             yield return AttackInterval;
         }
-        yield return null;
     }
 
-    protected Vector2 Direction2Vector2(Direction dir)
+    /// <summary>
+    /// direction=>Vector2
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    Vector2 Direction2Vector2(Direction dir)
     {
         Vector2 direction = Vector2.zero;
         switch (dir)
@@ -176,61 +175,64 @@ public class Character : MonoBehaviour
         }
         return direction;
     }
-
-    protected bool ObstacleCheck(Vector2 dir, LayerMask layer)
+    /// <summary>
+    /// check if anything on this direction by layer
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="layer"></param>
+    /// <returns></returns>
+    protected bool ObstacleCheck(Direction dir, LayerMask layer)
     {
         RaycastHit2D[] hit;
-        hit = Physics2D.RaycastAll(transform.position, dir, 0.18f, layer);
+        hit = Physics2D.RaycastAll(transform.position, Direction2Vector2(dir), 0.18f, layer);
         return hit.Length > 0;
     }
 
-    protected bool ObstacleCheck(Vector2 dir, LayerMask layer, out RaycastHit2D[] _hit)
+    protected bool ObstacleCheck(Direction dir, LayerMask layer, out RaycastHit2D[] _hit)
     {
         RaycastHit2D[] hit;
-        hit = Physics2D.RaycastAll(transform.position, dir, 0.18f, layer);
+        hit = Physics2D.RaycastAll(transform.position, Direction2Vector2(dir), 0.18f, layer);
         _hit = hit;
         return hit.Length > 0;
     }
 
 
 
-    public bool OnBeHit(int damage, Direction dir)
+    public void OnBeHit(int damage)
     {
-        onAttackState = true;
         HP -= damage;
+      
         if (HP <= 0)
         {
             HP = 0;
-            return true;
+            StopAllCoroutines();
+            Invoke("Die", 0.5f);
         }
-        switch (dir)
-        {
-            case Direction.Up:
-                targetDir = Direction.Down;
-                break;
-            case Direction.Down:
-                targetDir = Direction.Up;
-                break;
-            case Direction.Left:
-                targetDir = Direction.Right;
-                break;
-            case Direction.Right:
-                targetDir = Direction.Left;
-                break;
-
-        }
-        return false;
+    }
+    protected virtual void Die()
+    {
+        Destroy(gameObject);
     }
 
-    protected IEnumerator Move(Vector2 dir)
+
+    /// <summary>
+    /// Move by direction
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    protected IEnumerator Move(Direction dir)
     {
         Vector2 correctionPos = Pos.Pos2Vector2(Pos.Float2IntPos(transform.position));
         //transform.position = correctionPos;
-        Vector2 endPos = correctionPos + (dir * 0.18f);
+        Vector2 endPos = correctionPos + (Direction2Vector2(dir) * 0.18f);
         if (!isMoving)
             yield return SmoothMovement(endPos);
     }
-
+    /// <summary>
+    /// move to a vector2 position
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
     protected IEnumerator MoveTo(Vector2 pos)
     {
         if (!isMoving)
@@ -238,7 +240,12 @@ public class Character : MonoBehaviour
     }
 
     
-
+    /// <summary>
+    /// get direction by two Vector2
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <returns></returns>
     protected Direction GetDirection(Vector2 from,Vector2 to)
     {
         Direction dir;
@@ -259,24 +266,21 @@ public class Character : MonoBehaviour
 
     IEnumerator SmoothMovement(Vector2 endPos)
     {
-        isMoving = true;
-        Direction _dir = GetDirection(transform.position, endPos);
-        if(_animator.GetInteger("Dir")!=(int)_dir)
-        {
-            _animator.SetInteger("Dir", (int)_dir);
-            yield return null;
-        }
-      
-        _animator.SetBool("MoveState", true);
-
-        
+        isMoving = true; 
 
         float Distance = Vector2.Distance(new Vector2(transform.position.x, transform.position.y), endPos);
 
-
+        Direction _dir = GetDirection(transform.position, endPos);
+        _animator.SetInteger("Dir", (int)_dir);
+        yield return null;
         while (Distance > float.Epsilon)
         {
-
+            if (_animator.GetInteger("Dir") != (int)_dir)
+            {
+                _animator.SetInteger("Dir", (int)_dir);
+                yield return null;
+            }
+            _animator.SetBool("MoveState", true);
             Vector2 newPos = Vector2.MoveTowards(new Vector2(transform.position.x, transform.position.y), endPos, MoveSpeed * Time.deltaTime);
 
             //Debug.DrawRay(new Vector2(transform.position.x, transform.position.y), Vector3.back, Color.red, 10f);
@@ -288,54 +292,30 @@ public class Character : MonoBehaviour
 
             Distance = Vector2.Distance(new Vector2(transform.position.x, transform.position.y), endPos);
 
-            CheckAroundEnemy();
-
-            if (onAttackState)
-            {
-                _animator.SetBool("MoveState", false);
-                yield return null;
-                _animator.SetInteger("Dir", (int)targetDir);
-
-                while (HP != 0 && isAlive && ObstacleCheck(Direction2Vector2(targetDir), Enemylayer))
-                {
-                    yield return Attack();
-                }
-                onAttackState = false;
-                _animator.SetInteger("Dir", (int)CurDir);
-                _animator.SetBool("MoveState", true);
-            }
-            yield return null;
+            //check if enemys around
+            yield return CheckAndAttackEnemyAround();
         }
-        //check if enemys around
-
-
         _animator.SetBool("MoveState", false);
         isMoving = false;
         yield return null;
 
     }
 
-    void CheckAroundEnemy()
+    protected virtual IEnumerable Eat()
     {
-        Collider2D[] arounds = Physics2D.OverlapCircleAll(transform.position, 0.18f, Enemylayer);
-        if (arounds.Length > 0)
+        RaycastHit2D[] hit;
+        if(ObstacleCheck(CurDir, FoodLayer, out hit ))
         {
-            targetDir = GetDirection(transform.position, arounds[0].transform.position);
-            onAttackState = true;
+            _animator.SetTrigger("Attack");
+            var script = hit[0].transform.GetComponent<Character>();
+            CarryNutrients += script.CarryNutrients;
+            Destroy(hit[0].transform.gameObject);
+            yield return IdleTime;
         }
+
+        
     }
 
-
-
-    //bool CheckAroundEnemy(out Direction dir)
-    //{
-
-    //}
-
-    protected void Die()
-    {
-
-    }
 
 }
 

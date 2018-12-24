@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4281448439305534}
   - component: {fileID: 95303030188890288}
   - component: {fileID: 212673812649993184}
-  - component: {fileID: 114664472561519858}
   - component: {fileID: 61937372563901722}
+  - component: {fileID: 114955250029538100}
   m_Layer: 10
   m_Name: EyeBall
   m_TagString: Monster
@@ -86,7 +86,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114664472561519858
+--- !u!114 &114955250029538100
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,25 +94,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 1646597247751336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 891d4a1a81af9eb41b02e57c365a3457, type: 3}
+  m_Script: {fileID: 11500000, guid: f9b6f7dbbb3ffb743a42c31d4c134b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MoveSpeed: 0.1
-  HP: 50
+  HP: 30
   damage: 1
-  lifeTime: 0
+  CarryNutrients: 1
+  isLowMonster: 1
   IntervalTime: 0.2
   idleTime: 1
-  nutrient: -20
+  nutrient: 10
   Enemylayer:
     serializedVersion: 2
-    m_Bits: 163840
+    m_Bits: 131072
   FoodLayer:
     serializedVersion: 2
     m_Bits: 0
   WallLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 262656
 --- !u!212 &212673812649993184
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -50,3 +50,6 @@ TagManager:
   - name: character
     uniqueID: 673370773
     locked: 0
+  - name: king
+    uniqueID: 2288492527
+    locked: 0

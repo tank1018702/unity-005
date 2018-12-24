@@ -4,52 +4,75 @@ using UnityEngine;
 
 public class Monster : Character
 {
+    
+
+    WaitForSeconds WaitHpUpdate = new WaitForSeconds(1f);
 
     protected override void Start()
     {
         base.Start();
+        StartCoroutine(HpUpdate());
+        StartCoroutine(Action());
+
     }
     protected virtual IEnumerator Action()
     {
-        while (HP != 0 && isAlive)
+        while (true)
         {
-            if (onAttackState)
+            RandomDir();
+
+            if (Random.Range(0, 4) > 2)
             {
-                
-                yield return null;
-
-                while (HP != 0 && isAlive && ObstacleCheck(Direction2Vector2(targetDir), Enemylayer))
-                {
-                    yield return Attack();
-                }
-
-                onAttackState = false;
-                yield return null;
+                yield return Idle();
             }
             else
             {
-                RandomDir();
+                yield return null;
+                if (ObstacleCheck(CurDir, TempLayer))
+                {
+                    yield return Behaviour();
 
-                if (Random.Range(0, 4) > 2)
-                {
-                    yield return IdleTime;
+                    continue;
+
                 }
-                else
-                {
-                    yield return null;
-                    Vector2 _dir = Direction2Vector2(CurDir);
-                    if (ObstacleCheck(_dir, TempLayer))
-                    {
-                        yield return Behaviour(_dir);
-                        continue;
-                    }
-                    yield return Move(Direction2Vector2(CurDir));
-                }
+                yield return Move(CurDir);
             }
         }
-        Die();
-        yield return IdleTime;
-        Destroy(gameObject);
     }
 
+
+    IEnumerator HpUpdate()
+    {
+        while(HP>0)
+        {
+            OnBeHit(1);
+            yield return WaitHpUpdate;
+        }
+       
+    }
+
+
+    IEnumerator Behaviour()
+    {
+        if(isLowMonster)
+        {
+            yield return  TransportNutrients();
+        }
+        else
+        {
+            yield return Eat();
+        }
+        
+    }
+
+    IEnumerator Idle()
+    {
+        float time = idleTime;
+        while(time>float.Epsilon)
+        {
+            time -= Time.deltaTime;
+            CheckAndAttackEnemyAround();
+            yield return null;
+        }
+    }
 }

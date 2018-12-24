@@ -18,8 +18,21 @@ public class GameManager : MonoBehaviour
     public ParticleSystem MouseClick;
 
     public event  Action<Vector2> OnMouseClick;
-    
 
+    Pos HeroStartPos = new Pos(-22, 1);
+    Pos KingStartPos = new Pos(1, -2);
+    public GameObject Hero;
+    public GameObject King;
+    public GameObject KingCursor;
+
+    public GameObject UI;
+
+
+    bool OnSelect = false;
+    Vector2 MousePos;
+
+    GameObject k;
+    GameObject H;
     //float intervalTime=5f;
 
     //WaitForSeconds interval;
@@ -56,16 +69,73 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //StartCoroutine(CharacterUpdate());
+        StartCoroutine(Level_1(30f));
+        k= Instantiate(King, Pos.Pos2Vector2(KingStartPos), Quaternion.identity);
+        KingCursor.SetActive(false);
     }
 
 
 
     void Update()
     {
-        InputProcess();
+        MousePos = _camera.ScreenToWorldPoint(Input.mousePosition);
+        if (!OnSelect)
+        {
+            InputProcess();
+        }
+        else
+        {
+            SelectPos();
+        }
+
 
     }
+    
 
+    IEnumerator Level_1(float time)
+    {
+        yield return new WaitForSeconds(time);
+        OnSelect = true;
+        Time.timeScale = 0;
+        H= Instantiate(Hero, Pos.Pos2Vector2(HeroStartPos), Quaternion.identity);
+        
+        KingCursor.SetActive(true);
+        k.SetActive(false);
+    }
+
+     public  void GameOver()
+    {
+
+        Time.timeScale = 0;
+        UI.transform.GetChild(0).gameObject.SetActive(true);
+    }
+
+ 
+
+    void SelectPos()
+    {
+
+        
+        if(Input.GetMouseButtonDown(1))
+        {
+            Time.timeScale = 1;
+            OnSelect = false;
+            k.SetActive(true);
+            k.transform.position = KingCursor.transform.position;
+            KingCursor.SetActive(false);
+            H.GetComponent<Hero>().Init(Pos.Float2IntPos(k.transform.position));
+
+        }
+        if(!BlockMap.ContainsKey(Pos.Float2IntPos(MousePos)))
+        {
+            
+            KingCursor.transform.position = Pos.Pos2Vector2(Pos.Float2IntPos(MousePos));
+
+
+        }
+        
+
+    }
 
     void InitMap()
     {
@@ -82,14 +152,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    bool CheckBlockInMap(Vector2 MousePos)
+    bool CheckBlockInMap()
     {
-        Pos p = Pos.Float2IntPos(_camera.ScreenToWorldPoint(MousePos));
+        Pos p = Pos.Float2IntPos(MousePos);
         if (BlockMap.ContainsKey(p))
         {
-            OnMouseClick(Pos.Pos2Vector2(p));
+            
             if(BlockMap[p].OnClick())
             {
+                OnMouseClick(Pos.Pos2Vector2(p));
+
                 BlockMap.Remove(p);
             }
             return true;
@@ -103,9 +175,9 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {     
             
-            Vector2 pos = _camera.ScreenToWorldPoint(Input.mousePosition);
-            //Debug.Log(Pos.Float2IntPos(pos));
-            CheckBlockInMap(Input.mousePosition);
+            
+            //Debug.Log(Pos.Float2IntPos(MousePos));
+            CheckBlockInMap();
 
         }
     }
@@ -113,9 +185,9 @@ public class GameManager : MonoBehaviour
 
    void PlayParticles(Vector2 pos)
     {
-      
+        ParticleSystem p = Instantiate(MouseClick, new Vector3(pos.x,pos.y,-1), Quaternion.identity);
+        p.Play();
        
-        
      
     }
 
@@ -200,5 +272,5 @@ public struct Pos:IEquatable<Pos>
     }
    
     
-
+    
 }

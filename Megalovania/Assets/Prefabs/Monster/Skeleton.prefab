@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4867178474720068}
   - component: {fileID: 95178508684978716}
   - component: {fileID: 212221525901015030}
-  - component: {fileID: 114558313741643688}
   - component: {fileID: 61643375608838946}
+  - component: {fileID: 114890719634210808}
   m_Layer: 12
   m_Name: Skeleton
   m_TagString: Monster
@@ -86,7 +86,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114558313741643688
+--- !u!114 &114890719634210808
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,16 +94,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 1505654298627174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 891d4a1a81af9eb41b02e57c365a3457, type: 3}
+  m_Script: {fileID: 11500000, guid: f9b6f7dbbb3ffb743a42c31d4c134b07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 0.2
-  HP: 100
-  damage: 20
-  lifeTime: 0
-  IntervalTime: 1
-  idleTime: 1
-  nutrient: 3
+  MoveSpeed: 0.49
+  HP: 60
+  damage: 10
+  CarryNutrients: 0
+  isLowMonster: 0
+  IntervalTime: 0.65
+  idleTime: 1.05
+  nutrient: -10
   Enemylayer:
     serializedVersion: 2
     m_Bits: 131072
@@ -112,7 +113,7 @@ MonoBehaviour:
     m_Bits: 0
   WallLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 262656
 --- !u!212 &212221525901015030
 SpriteRenderer:
   m_ObjectHideFlags: 1

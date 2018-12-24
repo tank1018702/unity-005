@@ -10,17 +10,36 @@ public class Hero : Character
 
     bool IsFindTarget;
 
+    
+
     protected override void Start()
     {
         base.Start();
 
         map = new Dictionary<Pos, bool>();
 
-        target = new Pos(10,12);
+     
 
         IsFindTarget = false;
 
-        StartCoroutine(HeroSearchRoad(Pos.Float2IntPos(transform.position)));
+        
+    }
+
+    public  void Init(Pos p)
+    {
+
+        target = p;
+        StartCoroutine(_start());
+    }
+
+    IEnumerator _start()
+    {
+
+        yield return Move(Direction.Right);
+        yield return MoveTo(Pos.Pos2Vector2(new Pos(0, 1)));
+        yield return MoveTo(Pos.Pos2Vector2(new Pos(0, -1)));
+        yield return HeroSearchRoad(Pos.Float2IntPos(transform.position));
+       
     }
 
 
@@ -33,7 +52,10 @@ public class Hero : Character
         if (next.Equals(target))
         {
             IsFindTarget = true;
+            Debug.Log("findTarget");
+            GameManager.instance.GameOver();
             yield return new WaitForSeconds(2f);
+
             yield break;
         }
 
@@ -65,7 +87,7 @@ public class Hero : Character
         yield return MoveTo(Pos.Pos2Vector2(cur));
     }
 
-   
+
     List<Pos> GetCurrentNode()
     {
         List<Pos> list = new List<Pos>();
@@ -74,22 +96,22 @@ public class Hero : Character
 
         Pos cur = Pos.Float2IntPos(transform.position);
 
-        if (!ObstacleCheck(Direction2Vector2(Direction.Up), WallLayer))
+        if (!ObstacleCheck(Direction.Up, WallLayer))
         {
             list.Add(new Pos(cur.x, cur.y + 1));
 
         }
-        if (!ObstacleCheck(Direction2Vector2(Direction.Down), WallLayer))
+        if (!ObstacleCheck(Direction.Down, WallLayer))
         {
             list.Add(new Pos(cur.x, cur.y - 1));
 
         }
-        if (!ObstacleCheck(Direction2Vector2(Direction.Right), WallLayer))
+        if (!ObstacleCheck(Direction.Right, WallLayer))
         {
             list.Add(new Pos(cur.x + 1, cur.y));
 
         }
-        if (!ObstacleCheck(Direction2Vector2(Direction.Left), WallLayer))
+        if (!ObstacleCheck(Direction.Left, WallLayer))
         {
             list.Add(new Pos(cur.x - 1, cur.y));
 
